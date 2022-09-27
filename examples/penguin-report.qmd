@@ -1,0 +1,30 @@
+---
+title: "Penguins"
+date: today
+format: html
+params:
+  species: Adelie
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(palmerpenguins)
+
+penguin_filter <- penguins |>
+  filter(species == params$species,
+    !is.na(body_mass_g))
+diff_rows <- nrow(penguins) - nrow(penguin_filter)
+```
+
+We have data about `r nrow(penguins)` penguins. Only
+`r diff_rows` are classified as `r params$species`. The 
+distribution of the `r params$species` penguins are shown below:
+
+```{r}
+#| echo: false
+penguin_filter |>
+  ggplot(aes(body_mass_g)) +
+  geom_histogram(binwidth = 100)
+```

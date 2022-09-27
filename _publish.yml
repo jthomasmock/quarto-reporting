@@ -1,0 +1,4 @@
+- source: quarto-reporting.qmd
+  quarto-pub:
+    - id: 9b20b51a-e0cd-4c71-b679-59b9b30eb7b8
+      url: 'https://quartopub.com/sites/thomasmock/reports-presentations'

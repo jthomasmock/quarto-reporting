@@ -1,0 +1,66 @@
+---
+format: html
+params:
+  engine: "ranger"
+---
+
+### Ames Housing Dataset
+
+```{r}
+library(tidymodels)
+
+data(ames)
+
+set.seed(4595)
+data_split <- initial_split(ames, strata = "Sale_Price", prop = 0.75)
+
+ames_train <- training(data_split)
+ames_test  <- testing(data_split)
+
+```
+
+## Random Forest
+
+```{r}
+rf_defaults <- rand_forest(mode = "regression", mtry = 3, trees = 1000) 
+rf_defaults
+```
+
+## Fit a model
+
+```{r}
+preds <- c("Longitude", "Latitude", "Lot_Area", "Neighborhood", "Year_Sold")
+
+rf_xy_fit <- 
+  rf_defaults %>%
+  set_engine(params$engine) %>%
+  fit(
+    log10(Sale_Price) ~ Longitude + Latitude + Lot_Area + Neighborhood + Year_Sold,
+    data = ames_train
+  )
+
+rf_xy_fit
+```
+
+## Predict
+
+```{r}
+test_results <- 
+  ames_test %>%
+  select(Sale_Price) %>%
+  mutate(Sale_Price = log10(Sale_Price)) %>%
+  bind_cols(
+    predict(rf_xy_fit, new_data = ames_test[, preds])
+  )
+```
+
+## Report results
+
+```{r}
+test_results %>% slice(1:5)
+```
+
+```{r}
+test_results %>% metrics(truth = Sale_Price, estimate = .pred) 
+```
+

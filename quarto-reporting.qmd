@@ -1,0 +1,963 @@
+---
+title: "Beautiful Reports and Presentations<br>with Quarto"
+author: "Tom Mock"
+date: today
+format: 
+  revealjs:
+    self-contained: false
+    slide-number: c/t
+    width: 1600
+    height: 900
+    logo: "https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png"
+    footer: "[thomasmock.quarto.pub/reports-presentations](https://thomasmock.quarto.pub/reports-presentations/)"
+    theme: ["simple", "styles.scss"]
+    echo: true
+    multiplex: true
+    code-link: true
+    title-slide-attributes:
+      data-background-color: "#447099"
+editor: source
+---
+
+## Static documents
+
+-   A static document is your "daily driver" - has the power for a complex table of contents, figure alignment, control of ouptut/code, and other niceties
+-   Useful as a lab notebook, scratchpad, or the final output for your team
+
+## Parameters
+
+You may have a set of parameters that are used to create different variations of a report. For example:
+
+-   Showing results for a specific geographic location.
+-   Running a report that covers a specific time period.
+-   Running a single analysis multiple times for different assumptions.
+
+## Parameters
+
+::: columns
+::: {.column .fragment width="45%"}
+**Python** - Papermill style<br>
+
+``` {{python}}
+#| tags: [parameters]
+
+alpha = 0.1
+ratio = 0.1
+```
+:::
+
+::: {.column .fragment width="40%"}
+<br>
+
+``` {{python}}
+str(alpha)
+```
+:::
+:::
+
+. . .
+
+::: columns
+::: {.column width="45%"}
+**R** - YAML style<br>
+
+    ---
+    title: "My Document"
+    params:
+      alpha: 0.1
+      ratio: 0.1
+    ---
+:::
+
+::: {.column .fragment width="40%"}
+<br>
+
+``` {{r}}
+str(params$alpha)
+```
+:::
+:::
+
+. . .
+
+**CLI/Terminal**
+
+``` bash
+quarto render doc.qmd -P alpha:0.2 -P ratio:0.3
+```
+
+## Render with Parameters
+
+::: columns
+::: {.column .fragment width="52%"}
+``` yaml
+---
+title: "Penguins"
+date: today
+format: html
+params:
+  species: Adelie
+---
+```
+
+```` markdown
+```{{r}}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(palmerpenguins)
+
+penguin_filter <- penguins |>
+  filter(species == params$species,
+    !is.na(body_mass_g))
+diff_rows <- nrow(penguins) - nrow(penguin_filter)
+```
+````
+
+``` markdown
+We have data about `r knitr::inline_expr("nrow(penguins)")` penguins. Only
+`r knitr::inline_expr("diff_rows")` are classified as `r knitr::inline_expr("params$species")`. 
+The distribution of the `r knitr::inline_expr("params$species")` penguins 
+are shown below:
+```
+
+```` code
+```{{r}}
+#| echo: false
+penguin_filter |>
+  ggplot(aes(body_mass_g)) +
+  geom_histogram(binwidth = 100)
+```
+````
+:::
+
+::: {.column .fragment width="44%"}
+![](images/penguin-report.png){fig-alt="A screenshot of the output report, displaying the title, date, information about the penguins and a basic histogram."}
+:::
+:::
+
+## Render with Parameters
+
+``` bash
+quarto render penguin-report.qmd -P species:Gentoo --output gentoo-report.html
+quarto render penguin-report.ipynb -P species:Gentoo --output gentoo-report.html
+```
+
+. . .
+
+```{r}
+#| eval: false
+#| echo: true
+render_fun <- function(penguin){
+  quarto::quarto_render(
+    input = "penguin-report.qmd",
+    execute_params = list(species = penguin),
+    output_file = glue::glue("{penguin}-report.html")
+  )
+}
+
+unique(penguins$species) |>
+  as.character() |> 
+  purrr::walk(render_fun)
+```
+
+. . .
+
+``` code
+Output created: Adelie-report.html
+Output created: Chinstrap-report.html
+Output created: Gentoo-report.html
+```
+
+## Parameters for modeling
+
+[Example adapted from `tidymodels` docs](https://www.tidymodels.org/learn/models/parsnip-ranger-glmnet/)
+
+``` yaml
+---
+format: html
+params:
+  engine: "ranger"
+---
+```
+
+. . .
+
+``` bash
+quarto render tidymodels-example.qmd -P engine:randomForest
+quarto render tidymodels-example.qmd -P engine:ranger
+```
+
+. . .
+
+<br>
+
+::: columns
+::: {.column .fragment width="44%"}
+``` code
+test_results %>% slice(1:5)
+
+#> # A tibble: 5 × 2
+#>   Sale_Price .pred
+#>        <dbl> <dbl>
+#> 1       5.39  5.27
+#> 2       5.28  5.29
+#> 3       5.23  5.26
+#> 4       5.21  5.25
+#> 5       5.60  5.52
+```
+
+``` r
+test_results %>% metrics(truth = Sale_Price, 
+                          estimate = .pred) 
+
+#> # A tibble: 3 × 3
+#>   .metric .estimator .estimate
+#>   <chr>   <chr>          <dbl>
+#> 1 rmse    standard      0.0925
+#> 2 rsq     standard      0.742 
+#> 3 mae     standard      0.0620
+```
+:::
+
+::: {.column .fragment width="44%"}
+``` r
+test_results %>% slice(1:5)
+
+#> # A tibble: 5 × 2
+#>   Sale_Price .pred
+#>        <dbl> <dbl>
+#> 1       5.39  5.27
+#> 2       5.28  5.28
+#> 3       5.23  5.26
+#> 4       5.21  5.32
+#> 5       5.60  5.51
+```
+
+``` r
+test_results %>% metrics(truth = Sale_Price, 
+                          estimate = .pred) 
+
+#> # A tibble: 3 × 3
+#>   .metric .estimator .estimate
+#>   <chr>   <chr>          <dbl>
+#> 1 rmse    standard      0.0944
+#> 2 rsq     standard      0.731 
+#> 3 mae     standard      0.0626
+```
+:::
+:::
+
+# Unified Syntax {background-color="#447099"}
+
+## Quarto's unified syntax
+
+::: {style="font-size: 65px;"}
+``` bash
+quarto render boston-terrier.qmd --to html
+```
+:::
+
+. . .
+
+::: {style="font-size: 65px;"}
+``` bash
+quarto render boston-terrier.qmd --to pdf
+```
+:::
+
+# 
+
+::: {.columns style="margin-top: -100px;"}
+::: {.column width="45%"}
+![HTML](images/boston-history-html.jpeg){fig-alt="A screenshot of a HTML article about Boston Terriers, the document has an image in the right hard margin, a floating table of contents, and different sections split up by headers"}
+:::
+
+::: {.column .fragment width="50%"}
+![PDF](images/boston-history-pdf.jpeg){fig-alt="A screenshot of a PDF article about Boston Terriers, the document has an image in the right hard margin, a floating table of contents, and different sections split up by headers"}
+:::
+:::
+
+## Pandoc fenced divs
+
+``` markdown
+::: {.class}
+All this content can be modified
+:::
+```
+
+. . .
+
+Structure:
+
+-   Start and end with equal number of `:` - minimum of 3 `:::`
+-   Add curly brackets to indicate the start/end of class `{.class}` or `{sometimes-class}`
+
+. . .
+
+``` code
+::: {layout-ncol=2}
+
+![](image.png){fig-alt="Description of image 1"}
+
+![](image2.png){fig-alt="Description of image 1"}
+:::
+```
+
+## Tabsets
+
+Split up and flip between sections of a page, alternative to just two columns
+
+``` code
+::: {.panel-tabset}
+
+## Element 1
+...content...
+
+## Element 2
+...content...
+:::
+```
+
+## Tabsets
+
+::: panel-tabset
+## Code
+
+```{r}
+#| echo: fenced
+#| eval: false
+head(mtcars)
+```
+
+## Output
+
+```{r}
+#| eval: true
+#| echo: false
+head(mtcars)
+```
+:::
+
+## Tabsets
+
+    ::: {.panel-tabset}
+    ## Code
+    ```{{r}}
+    #| echo: fenced
+    #| eval: false
+    head(mtcars)
+    ```
+
+
+    ## Output
+    ```{{r}}
+    #| eval: true
+    #| echo: false
+    head(mtcars)
+    ```
+    :::
+
+## Pandoc bracketed spans
+
+This is [magic text]{.fragment}
+
+. . .
+
+``` markdown
+# this only works in presentations
+This is [magic text]{.fragment}
+```
+
+. . .
+
+Structure:
+
+-   Surround text with `[text]`
+-   Add curly brackets to indicate the start/end of class `{.class}` or `{sometimes-class}`
+
+## Footnotes
+
+You can create inline footnotes like so: `some inline text with a^[footnote]`
+
+. . .
+
+If you hover your mouse over the citation and footnote in this sentence you'll see a popup displaying the reference contents:
+
+``` yaml
+format:
+  html:
+    citations-hover: true
+    footnotes-hover: true
+```
+
+. . .
+
+<br>
+
+``` markdown
+For example, did you know that Howard is a dog^[Specifically he is a Boston Terrier, although
+sometimes he acts like a cat]?
+```
+
+## Unified syntax
+
+Layout image inline with paragraphs
+
+``` markdown
+::: {layout="[[30, 70], [100]]"}
+![Terrier Seated](Terrier_Seated_(Boston_Public_Library).jpeg){width="50%" fig-alt="Description of boston terrier"} 
+
+...paragraph 1... 
+
+...paragraph 2...
+
+:::
+```
+
+. . .
+
+Put image into the "gutter"/column margin
+
+``` markdown
+![A young male Boston Terrier with a Brown brindle coat](330px-Boston_Terrier_male.jpeg){.column-margin fig-alt="Description of a young male Boston Terrier with a Brown brindle coat"}
+```
+
+. . .
+
+Add footnotes:
+
+``` markdown
+The average life span of a Boston Terrier is around 11 to 13 years.^["The Boston Terrier Club Of America". Bostonterrierclubofamerica.org.]
+```
+
+# Code {background-color="#447099"}
+
+## Hide all code
+
+``` yaml
+format: html
+execute:
+  echo: false
+```
+
+. . .
+
+Turn back on at individual code-block level:
+
+``` r
+#| echo: true
+```
+
+## Fold code
+
+``` yaml
+format:
+  html:
+    code-fold: true
+    code-summary: "Hidden code"
+```
+
+. . .
+
+Turn on at individual code-block level:
+
+``` r
+#| code-fold: true
+#| code-summary: "Hidden code"
+```
+
+## Code tools
+
+``` yaml
+format:
+  html:
+    code-fold: true
+    code-tools: true
+```
+
+. . .
+
+![](https://quarto.org/docs/output-formats/images/code-tools-01.png){fig-alt="Screenshot of Quarto document with the Code tools dropdown"}
+
+## Code tools, source
+
+> For example, here we specify that we want only "View Source" (no toggling of code visibility) and no caption on the code menu:
+
+``` yaml
+format:
+  html: 
+    code-tools:
+      source: true
+      toggle: false
+      caption: none
+```
+
+. . .
+
+![](https://quarto.org/docs/output-formats/images/code-tools-source.png){fig-alt="Screenshot of Quarto document with the source option overlay"}
+
+## Code tools, source repo
+
+In some situations (especially for longer documents), you may prefer to send viewers to the source code on a version-control website rather than the built in viewer.
+
+. . .
+
+``` yaml
+format:
+  html: 
+    code-tools:
+      source: https://github.com/quarto-dev/quarto-web/blob/main/index.md
+```
+
+# Code appearance {background-color="#447099"}
+
+## Code highlighting
+
+[Full highlighting options](https://quarto.org/docs/output-formats/html-code.html#highlighting)
+
+```{r}
+#| message: false
+library(dplyr)
+mtcars |> 
+  group_by(cyl, am) |> 
+  summarize(mean = mean(mpg), n = n(), .groups = "drop")
+```
+
+## Code highlighting
+
+``` yaml
+format: 
+  html:
+    highlight-style: arrow
+```
+
+![](https://quarto.org/docs/output-formats/images/arrow.png){width=50% fig-alt="Screenshot of code with a light theme on white background" .nostretch}
+
+## Code highlighting
+
+``` yaml
+format: 
+  html:
+    highlight-style: arrow
+    theme:
+      light: flatly
+      dark: darkly
+```
+
+. . .
+
+![](https://quarto.org/docs/output-formats/images/html-dark.png){fig-alt="Screenshot of dark mode toggle in Quarto doc."}
+
+. . .
+
+![](https://quarto.org/docs/output-formats/images/arrow-dark.png){fig-alt="Screenshot of code with a light theme on white background"}
+
+## Code linking with [`downlit`](https://downlit.r-lib.org/)
+
+> The goal of `downlit` is to provide syntax highlighting and automatic linking of R code
+
+``` yaml
+format:
+  html:
+    code-link: true
+```
+
+# Aesthetics {background-image="images/howard-gentleman.jpeg" background-size="contain" background-position="right" background-color="black"}
+
+## HTML Appearance
+
+Out of the box, Quarto is styled with Bootstrap 5 and opinionated defaults.
+
+Bootstrap is the most popular CSS Framework for responsive websites, where v5 is the latest.
+
+. . .
+
+Quarto comes pre-installed with 25 themes from [Bootswatch](https://bootswatch.com/) and you can use them like so:
+
+``` yaml
+---
+format:
+  html:
+    theme: litera
+---
+```
+
+<br>
+
+. . .
+
+Or you can customize a theme with CSS/SCSS/SASS.
+
+``` yaml
+---
+format:
+  html:
+    theme: 
+      - litera
+      - custom.scss
+---
+```
+
+## Bootswatch themes
+
+![](images/bootswatch.png){fig-alt="Screenshot of 6 bootswatch themes"}
+
+
+## PDF Articles
+
+``` yaml
+format:
+  pdf:
+    template: mytemplate.tex
+```
+
+. . .
+
+<br>
+
+See more on Journal Articles at <https://github.com/quarto-journals/>
+
+::: columns
+::: {.column .fragment width="35%"}
+``` yaml
+----
+title: "My Document"
+toc: true
+format:
+   acm-pdf: default
+   acm-html: default
+---
+```
+:::
+
+::: {.column .fragment width="60%"}
+![](images/jss.png){fig-alt="Screenshot of a rendered Quarto document to the Journal of Statistical Science format."}
+
+:::
+:::
+
+## More PDF + LaTeX templates
+
+Great work from the NFMS Open Science team on "Quarto titlepages": <https://nmfs-opensci.github.io/quarto_titlepages/>
+
+> The tex templates were written by [Eli Holmes](https://github.com/eeholmes) and the lua filter along with changes to the Pandoc templates to allow themes was written by [Mickaël Canouil](https://github.com/mcanouil).
+
+. . .
+
+![](https://nmfs-opensci.github.io/quarto_titlepages/images/bg-image.png){fig-alt="A screenshot of the titlepages Quarto output PDF. It has a logo, along with the title information and the affiliations of the authors."}
+
+# Presentations {background-color="#447099"}
+
+## Output types
+
+-   Quarto supports a variety of formats for creating presentations, including:
+
+    -   `revealjs` --- [reveal.js](https://quarto.org/docs/presentations/revealjs/) (HTML)
+
+    -   `pptx` --- [PowerPoint](https://quarto.org/docs/presentations/powerpoint.html) (MS Office)
+
+    -   `beamer` --- [Beamer](https://quarto.org/docs/presentations/beamer.html) (LaTeX/PDF)
+
+## Follow-up reading
+
+-   Emil Hvitfeldt's [Slidecraft 101: Colors and Fonts](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/)
+-   Meghan Hall's [Quarto Slides](https://meghan.rbind.io/blog/quarto-slides/)
+
+## Shared structures
+
+-   Incremental reveal/lists
+-   Multiple columns for layout
+-   Title/subtitle/author/etc
+-   Headings
+-   Code/Output
+
+## Creating slides
+
+``` code
+---
+format: revealjs
+---
+
+## Slide 1
+
+## Slide 2
+```
+
+## Incremental Lists
+
+Controllable via YAML:
+
+``` yaml
+format:
+  pptx:
+    incremental: true
+```
+
+. . .
+
+Or turn on/off via fenced divs:
+
+::: columns
+::: {.column .fragment width="45%"}
+``` markdown
+::: {.incremental}
+
+- Howard sleeps
+- Howard sprints
+
+:::
+```
+:::
+
+::: {.column .fragment width="45%"}
+``` markdown
+::: {.nonincremental}
+
+- Howard eats
+- Howard sleeps
+
+:::
+```
+:::
+:::
+
+## Multiple Columns
+
+``` markdown
+:::: {.columns}
+
+::: {.column width="50%" .fragment}
+Left column
+:::
+
+::: {.column width="50%" .fragment}
+Right column
+:::
+
+::::
+```
+
+# Presentations with `format: revealjs` {background-color="#447099"}
+
+## SECRET TIP
+
+<kbd>Alt + Click</kbd> to Zoom in to a section
+
+::: {.absolute .fragment bottom="25" left="100"}
+![](images/howard-gentleman.jpeg){width="150" fig-alt="Howard dressed as a victorian gentleman"}
+
+:::
+
+## Absolute Position
+
+Absolute position allows for tight control of placement.
+
+. . .
+
+``` markdown
+::: {.absolute bottom=25 left=100 .fragment}
+
+![](images/howard-gentleman.jpeg){width=150 fig-alt="Howard dressed as a victorian gentleman"}
+
+:::
+```
+
+## `output-location: column-fragment`
+
+```{r}
+#| echo: fenced
+#| output-location: column-fragment
+library(ggplot2)
+
+ggplot(mtcars, aes(x = mpg, y = disp)) +
+  geom_point()
+```
+
+## Themes
+
+Quarto comes with 10 built-in themes:
+
+`beige`, `blood`, `dark`, `default`, `league`, `moon`, `night`, `serif`, `simple`, `sky`, `solarized`
+
+. . .
+
+``` yaml
+---
+title: "Presentation"
+format:
+  revealjs: 
+    theme: [simple, custom.scss]
+---
+```
+
+## Themes + SCSS/SASS
+
+``` css
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+/*-- scss:defaults --*/
+
+$link-color: #EE6331;
+$font-family-sans-serif: 'Open Sans', sans-serif;
+$font-family-monospace: 'Fira Mono', monospace;
+
+$presentation-title-slide-text-align: left;
+
+/*-- scss:rules --*/
+
+h2 {
+  color: #447099 !important;
+}
+```
+
+## Footer/Logo
+
+``` yaml
+---
+format:
+  revealjs:
+    logo: "pic1.png"
+    footer: "Footer text"
+---
+```
+
+. . .
+
+``` yaml
+---
+format:
+  revealjs:
+    logo: "https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png"
+    footer: "[Reports and Presentations with Quarto](https://thomasmock.quarto.pub/reports-presentations/)"
+---
+```
+
+. . .
+
+One off footer:
+
+``` markdown
+::: {footer}
+Did you notice the footer?
+:::
+```
+
+::: footer
+Did you notice the footer?
+:::
+
+## Slide Background {background-color="black" background-image="images/howard-gentleman.jpeg" background-size="100px" background-repeat="repeat"}
+
+## Slide Background
+
+``` markdown
+## Slide Background {background-color="black" background-image="images/howard-gentleman.jpeg" background-size="100px" background-repeat="repeat"}
+```
+
+. . .
+
+Changing the background color will modify the font color for better contrast
+
+``` markdown
+## Slide Background {background-color="black")
+```
+
+## Background videos
+
+Automatically plays a full size video behind the slide.
+
+| **Attribute**            | **Default** | **Description**                                                                         |
+|:----------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `background-video`       |             | A single video source, or a comma separated list of video sources.                      |
+| `background-video-loop`  | false       | Flags if the video should play repeatedly.                                              |
+| `background-video-muted` | false       | Flags if the audio should be muted.                                                     |
+| `background-size`        | cover       | Use `cover` for full screen and some cropping or `contain` for letterboxing.            |
+| `background-opacity`     | 1           | Opacity of the background video on a 0-1 scale. 0 is transparent and 1 is fully opaque. |
+
+## `r-stack` + fragments
+
+```markdown
+::: {.r-stack}
+![](image1.png){.fragment width="450"}
+
+![](image2.png){.fragment width="300"}
+
+![](image3.png){.fragment width="400"}
+:::
+```
+
+## `r-stack` + fragments
+
+::: {.r-stack}
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Boston_Terrier_male.jpg/330px-Boston_Terrier_male.jpg){.fragment width="450"}
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Boston_Terrier_Eden_Forever.JPG/330px-Boston_Terrier_Eden_Forever.JPG){.fragment width="300"}
+
+![](images/howard-gentleman.jpeg){.fragment width="400"}
+:::
+
+## Custom classes
+
+From Emil's [article](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/):
+
+```css
+*-- scss:rules --*/
+
+.blue {
+  color: $theme-blue;
+  font-weight: bold;
+}
+
+.yellow {
+  color: $theme-yellow;
+  font-weight: bold;
+}
+```
+
+. . .
+
+```markdown
+[Quarto]{.blue} enables you to weave together [content]{.yellow} and 
+[executable code]{.yellow} into a **finished presentation**. 
+To learn more about [Quarto]{.blue} presentations see <https://quarto.org/docs/presentations/>.
+```
+
+## Custom Classes
+
+![](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/theme-example-highlight.png){fig-alt="Screenshot of Quarto presentation with specific text highlighted yellow/blue."}
+
+## Applying classes
+
+Use bracketed spans: `[text to color]{.yellow}` or use RStudio's Visual Editor:
+
+:::: {.columns}
+
+::: {.column width="45%" .fragment}
+![](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/apply-class-2.png)
+:::
+
+::: {.column width="45%" .fragment}
+![](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/apply-class-3.png)
+:::
+
+::::
+
+## The end!
+
+Read all the docs at [https://quarto.org/docs/guide/](https://quarto.org/docs/guide/)
+
+### Reports
+
+- [Quarto docs: Documents](https://quarto.org/docs/output-formats/html-basics.html)
+- [Quarto Gallery: Articles + Reports](https://quarto.org/docs/gallery/#articles-reports)
+- [Quarto Journal Articles](https://quarto.org/docs/journals/index.html)
+- "Quarto titlepages": <https://nmfs-opensci.github.io/quarto_titlepages/>
+
+### Presentations
+
+- [Quarto docs: Presentations](https://quarto.org/docs/presentations/)
+- [Quarto Gallery: Presentations](https://quarto.org/docs/gallery/#presentations)
+-   Emil Hvitfeldt's [Slidecraft 101: Colors and Fonts](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/)
+-   Meghan Hall's [Quarto Slides](https://meghan.rbind.io/blog/quarto-slides/)
+- Andrew Heiss' Quarto slides on [APIs and webscraping with R](https://github.com/andrewheiss/2022-seacen)

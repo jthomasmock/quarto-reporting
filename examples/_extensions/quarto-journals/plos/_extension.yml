@@ -1,0 +1,62 @@
+title: PLOS
+author: Christophe Dervieux
+version: 0.0.1
+contributes:
+  formats:
+    common:
+      # define below YAML configuration common to all formats
+      execute:
+        echo: false
+      crossref:
+        fig-prefix: Fig
+        eq-prefix: Eq
+      callout-appearance: simple
+      callout-icon: false
+      # https://www.zotero.org/styles/?q=plos
+      csl: https://www.zotero.org/styles/plos-one
+      filters:
+        - filter.lua
+    pdf:
+      keep-tex: true
+      block-headings: false
+      documentclass: article
+      papersize: letter
+      fontsize: 10pt
+      has-frontmatter: false
+      toc: false
+      lof: false
+      lot: false
+      colorlinks: false
+      geometry: 
+        - top=0.85in
+        - left=2.75in
+        - footskip=0.75in
+      biblio-style: plos2015
+      include-in-header: _preamble.tex
+      template-partials:
+        # Add here the partials your format is using
+        - "partials/doc-class.tex"
+        - "partials/before-body.tex"
+        - "partials/_authors.tex"
+        - "partials/_affiliations.tex"
+        - "partials/title.tex"
+        - "partials/before-bib.tex"
+        - "partials/biblio.tex"
+      # Using some package that may require pdflatex
+      pdf-engine: pdflatex
+      # biblatex is not supported
+      cite-method: natbib
+      # number is required for plos2015.bst style
+      # and square,comma for correct guideline style
+      # https://tex.stackexchange.com/questions/376662/how-do-i-create-plosone-bib-references
+      natbiboptions: "numbers,square,comma"
+      # tcolorbox is not working ok with breakable for code blocks so deactivate this Quarto feature
+      # https://github.com/quarto-journals/article-format-template/issues/2
+      code-block-border-left: false
+      format-resources:
+        - plos2015.bst
+    html:
+      # define default configuration for the html version of your format
+      number-sections: true
+      toc: true
+      theme: custom.scss
