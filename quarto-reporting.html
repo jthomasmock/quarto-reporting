@@ -390,10 +390,29 @@
 <section id="title-slide" data-background-color="#447099" class="center"><h1 class="title">Beautiful Reports and Presentations<br>with Quarto</h1>
   <p class="author">Tom Mock</p>
   <p class="date">9/27/22</p>
-</section><section id="static-documents" class="slide level2"><h2>Static documents</h2>
+</section><section id="quarto---visual-editor" class="slide level2"><h2>Quarto - Visual Editor</h2>
+<p><img data-src="https://quarto.org/docs/visual-editor/images/visual-editing-toolbar.png" alt="A snippet of an RStudio window showing the options bar at the top of an RMarkdown document."></p>
+<table>
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 32%">
+</colgroup>
+<thead><tr class="header">
+<th>Format</th>
+<th>Insert</th>
+<th>Table</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td><img data-src="https://quarto.org/docs/visual-editor/images/visual-editing-format-menu.png" alt="The contents of the Format drop down menu."></td>
+<td><img data-src="https://quarto.org/docs/visual-editor/images/visual-editing-insert-menu.png" data-fig0alt="The contents of the Insert drop down menu."></td>
+<td><img data-src="https://quarto.org/docs/visual-editor/images/visual-editing-table-menu.png" alt="The contents of the Table drop down menu."></td>
+</tr></tbody>
+</table></section><section id="static-documents" class="slide level2"><h2>Static documents</h2>
 <ul>
 <li>A static document is your “daily driver” - has the power for a complex table of contents, figure alignment, control of ouptut/code, and other niceties</li>
 <li>Useful as a lab notebook, scratchpad, or the final output for your team</li>
+<li>Most powerful as the combination of written thoughts and observations along with source code</li>
 </ul></section><section id="parameters" class="slide level2"><h2>Parameters</h2>
 <p>You may have a set of parameters that are used to create different variations of a report. For example:</p>
 <ul>
@@ -1017,16 +1036,53 @@ Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</code></pre
 </section><section id="slide-background-1" class="slide level2"><h2>Slide Background</h2>
 <div class="sourceCode" id="cb61"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb61-1"><a href="#cb61-1"></a><span class="fu">## Slide Background {background-color="black" background-image="images/howard-gentleman.jpeg" background-size="100px" background-repeat="repeat"}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="fragment">
+<table>
+<thead><tr class="header">
+<th style="text-align: left;"><strong>Attribute</strong></th>
+<th style="text-align: left;"><strong>Default</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>background-image</code></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">URL of the image to show. GIFs restart when the slide opens.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>background-size</code></td>
+<td style="text-align: left;">cover</td>
+<td style="text-align: left;">See <a href="https://developer.mozilla.org/docs/Web/CSS/background-size">background-size</a> on MDN.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>background-position</code></td>
+<td style="text-align: left;">center</td>
+<td style="text-align: left;">See <a href="https://developer.mozilla.org/docs/Web/CSS/background-position">background-position</a> on MDN.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>background-repeat</code></td>
+<td style="text-align: left;">no-repeat</td>
+<td style="text-align: left;">See <a href="https://developer.mozilla.org/docs/Web/CSS/background-repeat">background-repeat</a> on MDN.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>background-opacity</code></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Opacity of the background image on a 0-1 scale. 0 is transparent and 1 is fully opaque.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section><section id="slide-background-2" class="slide level2"><h2>Slide Background</h2>
 <p>Changing the background color will modify the font color for better contrast</p>
+<div class="fragment">
 <div class="sourceCode" id="cb62"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb62-1"><a href="#cb62-1"></a><span class="fu">## Slide Background {background-color="black")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="background-videos" class="slide level2"><h2>Background videos</h2>
 <p>Automatically plays a full size video behind the slide.</p>
 <table>
 <colgroup>
-<col style="width: 31%">
-<col style="width: 10%">
-<col style="width: 58%">
+<col style="width: 26%">
+<col style="width: 23%">
+<col style="width: 50%">
 </colgroup>
 <thead><tr class="header">
 <th style="text-align: left;"><strong>Attribute</strong></th>
@@ -1107,7 +1163,7 @@ Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</code></pre
 </div>
 </div>
 </section><section id="the-end" class="slide level2"><h2>The end!</h2>
-<p>Read all the docs at <a href="https://quarto.org/docs/guide/">https://quarto.org/docs/guide/</a></p>
+<p>Read all the docs at <a href="https://quarto.org/docs/guide/" class="uri">https://quarto.org/docs/guide/</a></p>
 <h3 id="reports">Reports</h3>
 <ul>
 <li><a href="https://quarto.org/docs/output-formats/html-basics.html">Quarto docs: Documents</a></li>

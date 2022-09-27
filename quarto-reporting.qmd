@@ -19,10 +19,19 @@ format:
 editor: source
 ---
 
+## Quarto - Visual Editor
+
+![](https://quarto.org/docs/visual-editor/images/visual-editing-toolbar.png){fig-alt="A snippet of an RStudio window showing the options bar at the top of an RMarkdown document."}
+
+| Format                                                                                                                                                                       | Insert                                                                                                                                                                       | Table                                                                                                                                                                     |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ![](https://quarto.org/docs/visual-editor/images/visual-editing-format-menu.png){fig-alt="The contents of the Format drop down menu."} | ![](https://quarto.org/docs/visual-editor/images/visual-editing-insert-menu.png){fig0alt="The contents of the Insert drop down menu."} | ![](https://quarto.org/docs/visual-editor/images/visual-editing-table-menu.png){fig-alt="The contents of the Table drop down menu."} |
+
 ## Static documents
 
 -   A static document is your "daily driver" - has the power for a complex table of contents, figure alignment, control of ouptut/code, and other niceties
 -   Useful as a lab notebook, scratchpad, or the final output for your team
+- Most powerful as the combination of written thoughts and observations along with source code
 
 ## Parameters
 
@@ -532,7 +541,7 @@ format:
     highlight-style: arrow
 ```
 
-![](https://quarto.org/docs/output-formats/images/arrow.png){width=50% fig-alt="Screenshot of code with a light theme on white background" .nostretch}
+![](https://quarto.org/docs/output-formats/images/arrow.png){.nostretch width="50%" fig-alt="Screenshot of code with a light theme on white background"}
 
 ## Code highlighting
 
@@ -603,7 +612,6 @@ format:
 
 ![](images/bootswatch.png){fig-alt="Screenshot of 6 bootswatch themes"}
 
-
 ## PDF Articles
 
 ``` yaml
@@ -633,7 +641,6 @@ format:
 
 ::: {.column .fragment width="60%"}
 ![](images/jss.png){fig-alt="Screenshot of a rendered Quarto document to the Journal of Statistical Science format."}
-
 :::
 :::
 
@@ -746,7 +753,6 @@ Right column
 
 ::: {.absolute .fragment bottom="25" left="100"}
 ![](images/howard-gentleman.jpeg){width="150" fig-alt="Howard dressed as a victorian gentleman"}
-
 :::
 
 ## Absolute Position
@@ -857,7 +863,19 @@ Did you notice the footer?
 
 . . .
 
+| **Attribute**         | **Default** | **Description**                                                                                   |
+|:------------|:------------|:---------------------------------------------|
+| `background-image`    |             | URL of the image to show. GIFs restart when the slide opens.                                      |
+| `background-size`     | cover       | See [background-size](https://developer.mozilla.org/docs/Web/CSS/background-size) on MDN.         |
+| `background-position` | center      | See [background-position](https://developer.mozilla.org/docs/Web/CSS/background-position) on MDN. |
+| `background-repeat`   | no-repeat   | See [background-repeat](https://developer.mozilla.org/docs/Web/CSS/background-repeat) on MDN.     |
+| `background-opacity`  | 1           | Opacity of the background image on a 0-1 scale. 0 is transparent and 1 is fully opaque.           |
+
+## Slide Background
+
 Changing the background color will modify the font color for better contrast
+
+. . .
 
 ``` markdown
 ## Slide Background {background-color="black")
@@ -868,7 +886,7 @@ Changing the background color will modify the font color for better contrast
 Automatically plays a full size video behind the slide.
 
 | **Attribute**            | **Default** | **Description**                                                                         |
-|:----------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|:------------------|:----------------|:-----------------------------------|
 | `background-video`       |             | A single video source, or a comma separated list of video sources.                      |
 | `background-video-loop`  | false       | Flags if the video should play repeatedly.                                              |
 | `background-video-muted` | false       | Flags if the audio should be muted.                                                     |
@@ -877,7 +895,7 @@ Automatically plays a full size video behind the slide.
 
 ## `r-stack` + fragments
 
-```markdown
+``` markdown
 ::: {.r-stack}
 ![](image1.png){.fragment width="450"}
 
@@ -889,7 +907,7 @@ Automatically plays a full size video behind the slide.
 
 ## `r-stack` + fragments
 
-::: {.r-stack}
+::: r-stack
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Boston_Terrier_male.jpg/330px-Boston_Terrier_male.jpg){.fragment width="450"}
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Boston_Terrier_Eden_Forever.JPG/330px-Boston_Terrier_Eden_Forever.JPG){.fragment width="300"}
@@ -901,7 +919,7 @@ Automatically plays a full size video behind the slide.
 
 From Emil's [article](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/):
 
-```css
+``` css
 *-- scss:rules --*/
 
 .blue {
@@ -917,7 +935,7 @@ From Emil's [article](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts
 
 . . .
 
-```markdown
+``` markdown
 [Quarto]{.blue} enables you to weave together [content]{.yellow} and 
 [executable code]{.yellow} into a **finished presentation**. 
 To learn more about [Quarto]{.blue} presentations see <https://quarto.org/docs/presentations/>.
@@ -931,33 +949,31 @@ To learn more about [Quarto]{.blue} presentations see <https://quarto.org/docs/p
 
 Use bracketed spans: `[text to color]{.yellow}` or use RStudio's Visual Editor:
 
-:::: {.columns}
-
-::: {.column width="45%" .fragment}
+::: columns
+::: {.column .fragment width="45%"}
 ![](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/apply-class-2.png)
 :::
 
-::: {.column width="45%" .fragment}
+::: {.column .fragment width="45%"}
 ![](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/apply-class-3.png)
 :::
-
-::::
+:::
 
 ## The end!
 
-Read all the docs at [https://quarto.org/docs/guide/](https://quarto.org/docs/guide/)
+Read all the docs at <https://quarto.org/docs/guide/>
 
 ### Reports
 
-- [Quarto docs: Documents](https://quarto.org/docs/output-formats/html-basics.html)
-- [Quarto Gallery: Articles + Reports](https://quarto.org/docs/gallery/#articles-reports)
-- [Quarto Journal Articles](https://quarto.org/docs/journals/index.html)
-- "Quarto titlepages": <https://nmfs-opensci.github.io/quarto_titlepages/>
+-   [Quarto docs: Documents](https://quarto.org/docs/output-formats/html-basics.html)
+-   [Quarto Gallery: Articles + Reports](https://quarto.org/docs/gallery/#articles-reports)
+-   [Quarto Journal Articles](https://quarto.org/docs/journals/index.html)
+-   "Quarto titlepages": <https://nmfs-opensci.github.io/quarto_titlepages/>
 
 ### Presentations
 
-- [Quarto docs: Presentations](https://quarto.org/docs/presentations/)
-- [Quarto Gallery: Presentations](https://quarto.org/docs/gallery/#presentations)
+-   [Quarto docs: Presentations](https://quarto.org/docs/presentations/)
+-   [Quarto Gallery: Presentations](https://quarto.org/docs/gallery/#presentations)
 -   Emil Hvitfeldt's [Slidecraft 101: Colors and Fonts](https://www.emilhvitfeldt.com/post/slidecraft-colors-fonts/)
 -   Meghan Hall's [Quarto Slides](https://meghan.rbind.io/blog/quarto-slides/)
-- Andrew Heiss' Quarto slides on [APIs and webscraping with R](https://github.com/andrewheiss/2022-seacen)
+-   Andrew Heiss' Quarto slides on [APIs and webscraping with R](https://github.com/andrewheiss/2022-seacen)
