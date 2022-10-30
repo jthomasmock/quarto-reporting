@@ -844,7 +844,7 @@ format:
 One off footer:
 
 ``` markdown
-::: {footer}
+::: {.footer}
 Did you notice the footer?
 :::
 ```
